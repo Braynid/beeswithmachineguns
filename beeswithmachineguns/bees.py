@@ -45,6 +45,7 @@ STATE_FILENAME = os.path.expanduser('~/.bees')
 
 # Utilities
 
+
 def _read_server_list():
     instance_ids = []
 
@@ -62,6 +63,7 @@ def _read_server_list():
 
     return (username, key_name, zone, instance_ids)
 
+
 def _write_server_list(username, key_name, zone, instances):
     with open(STATE_FILENAME, 'w') as f:
         f.write('%s\n' % username)
@@ -69,14 +71,18 @@ def _write_server_list(username, key_name, zone, instances):
         f.write('%s\n' % zone)
         f.write('\n'.join([instance.id for instance in instances]))
 
+
 def _delete_server_list():
     os.remove(STATE_FILENAME)
+
 
 def _get_pem_path(key):
     return os.path.expanduser('~/.ssh/%s.pem' % key)
 
+
 def _get_region(zone):
-    return zone if 'gov' in zone else zone[:-1] # chop off the "d" in the "us-east-1d" to get the "Region"
+    return zone if 'gov' in zone else zone[:-1]  # chop off the "d" in the "us-east-1d" to get the "Region"
+
 
 def _get_security_group_ids(connection, security_group_names, subnet):
     ids = []
@@ -95,8 +101,8 @@ def _get_security_group_ids(connection, security_group_names, subnet):
 
         return ids
 
-# Methods
 
+# Methods
 def up(count, group, zone, image_id, instance_type, username, key_name, subnet, bid = None):
     """
     Startup the load testing server.
@@ -172,6 +178,7 @@ def up(count, group, zone, image_id, instance_type, username, key_name, subnet, 
 
     print 'The swarm has assembled %i bees.' % len(instances)
 
+
 def report():
     """
     Report the status of the load testing servers.
@@ -193,6 +200,7 @@ def report():
 
     for instance in instances:
         print 'Bee %s: %s @ %s' % (instance.id, instance.state, instance.ip_address)
+
 
 def down():
     """
@@ -217,6 +225,7 @@ def down():
 
     _delete_server_list()
 
+
 def _wait_for_spot_request_fulfillment(conn, requests, fulfilled_requests = []):
     """
     Wait until all spot requests are fulfilled.
@@ -237,6 +246,7 @@ def _wait_for_spot_request_fulfillment(conn, requests, fulfilled_requests = []):
             print "spot bee `{}` joined the swarm.".format(req.instance_id)
 
     return _wait_for_spot_request_fulfillment(conn, [r for r in requests if r not in fulfilled_requests], fulfilled_requests)
+
 
 def _attack(params):
     """
@@ -319,7 +329,6 @@ def _attack(params):
                 response['failed_requests_length'] = float(re.search('Length:\s+([0-9.]+)', failed_requests_detail.group(0)).group(1))
                 response['failed_requests_exceptions'] = float(re.search('Exceptions:\s+([0-9.]+)', failed_requests_detail.group(0)).group(1))
 
-        
         complete_requests_search = re.search('Complete\ requests:\s+([0-9]+)', ab_results)
 
         response['ms_per_request'] = float(ms_per_request_search.group(1))
@@ -418,7 +427,7 @@ def _create_request_time_cdf_csv(results, complete_bees_params, request_time_cdf
                 row = [i, request_time_cdf[i]] if i < len(request_time_cdf) else [i,float("inf")]
                 for r in results:
                     if r is not None:
-                    	row.append(r['request_time_cdf'][i]["Time in ms"])
+                        row.append(r['request_time_cdf'][i]["Time in ms"])
                 writer.writerow(row)
 
 
@@ -618,4 +627,3 @@ def attack(url, n, c, **options):
         else:
             print('Your targets performance tests meet our standards, the Queen sends her regards.')
             sys.exit(0)
-

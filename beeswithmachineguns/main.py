@@ -28,6 +28,7 @@ import bees
 from urlparse import urlparse
 from optparse import OptionParser, OptionGroup
 
+
 def parse_options():
     """
     Handle the command line arguments for spinning up bees
@@ -169,6 +170,7 @@ commands:
         bees.down()
     elif command == 'report':
         bees.report()
+
 
 def main():
     parse_options()
